@@ -16,9 +16,13 @@ app.get("/:userId/trips", async (req, res) => {
       { path: "hostId" },
       { path: "listingId" },
     ]);
-    console.log(trips);
 
-    res.status(202).json(trips);
+    console.log(trips)
+
+    res.status(202).json({
+      message:"trips find successfully",
+      trips
+    });
   } catch (err) {
     console.log(err);
     res
@@ -33,16 +37,15 @@ app.patch("/:userId/:listingId", async (req, res) => {
   try {
     const { userId, listingId } = req.params;
 
-    const user = await User.findById(userId);
+    const user = await User?.findById(userId);
     const listing = await Listing.findById(listingId).populate("creator");
+
 
     const favouriteListing = user?.wishList.find(
       (item) => item?._id.toString() === listingId
     );
-
-
     if (favouriteListing) {
-      user.wishList = user.wishList.filter(
+      user.wishList = user?.wishList?.filter(
         (item) => item._id.toString() !== listingId
       );
       await user.save();
@@ -68,6 +71,7 @@ app.patch("/:userId/:listingId", async (req, res) => {
     });
   }
 });
+
 
 
 
@@ -109,9 +113,6 @@ app.get("/:userId/reservations", async (req, res) => {
       .json({ message: "Can not find reservation!", error: err.message });
   }
 });
-
-
-
 
 
 export default app;
